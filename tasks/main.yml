@@ -1,0 +1,8 @@
+---
+
+- include: hsr.yml
+  when: ( hsr is defined )
+  tags:
+    - hsr
+
+...
