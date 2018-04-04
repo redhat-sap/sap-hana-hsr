@@ -20,7 +20,7 @@ It introduces the following additional variables:
 
 These  variables need to be set in the host_vars file. See [Best Practises](http://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html?highlight=host_var#group-and-host-variables) for more details.
 
-### Example host_vars file for primary
+### Example host_vars file for primary server 'node1'
 
      ---
      deployment_instance: true
@@ -53,7 +53,7 @@ These  variables need to be set in the host_vars file. See [Best Practises](http
          hsr_replicationmode: sync
          hsr_backup_directory: /hana/shared/L01/HDB10/backup/data
 
-### Example host_vars file for secondary
+### Example host_vars file for secondary server 'node2'
 
      ---
      deployment_instance: true
