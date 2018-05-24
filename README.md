@@ -82,7 +82,7 @@ These  variables need to be set in the host_vars file. See [Best Practises](http
          hsr_name: DC2
          hsr_type: SECONDARY
          hsr_configure: yes
-         hsr_type_remote_host: node2
+         hsr_type_remote_host: node1
          hsr_operation_mode: logreplay
          hsr_replicationmode: sync
          hsr_backup_directory: /hana/shared/L01/HDB10/backup/data
