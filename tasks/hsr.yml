@@ -106,15 +106,26 @@
 #
 - name: make sure local directory for collecting SR keyfiles exist
   become: false
-  local_action: file path={{ lookup('env','HOME') }}/sr_key_files state=directory mode=0755 
+  local_action: file path="{{ sap_hana_hsr_keyexchange_tmp }}" state=directory mode=0755 
   when:
     - hsr_deploy_type is defined
     - hsr_deploy_type == "enable"
 
+#- name: make sure local directory for collecting SR keyfiles exist
+#  become: false
+#  local_action:
+#    file:
+#      path: "{{ sap_hana_hsr_keyexchange_tmp }}" 
+#      state: directory 
+#      mode: 0755 
+#  when:
+#    - hsr_deploy_type is defined
+#    - hsr_deploy_type == "enable"
+
 - name: fetch the remote dat 
   fetch:
     src: /usr/sap/{{ item.value.hana_sid|upper }}/SYS/global/security/rsecssfs/data/SSFS_{{ item.value.hana_sid|upper }}.DAT
-    dest: "{{ lookup('env','HOME') }}/sr_key_files/SSFS_{{ item.value.hana_sid|upper }}.DAT"
+    dest: "{{ sap_hana_hsr_keyexchange_tmp }}/SSFS_{{ item.value.hana_sid|upper }}.DAT"
     fail_on_missing: yes
     flat: yes
   with_dict: "{{ hsr }}"
@@ -125,7 +136,7 @@
 - name: fetch the remote key 
   fetch:
     src: /usr/sap/{{ item.value.hana_sid|upper }}/SYS/global/security/rsecssfs/key/SSFS_{{ item.value.hana_sid|upper }}.KEY
-    dest: "{{ lookup('env','HOME') }}/sr_key_files/SSFS_{{ item.value.hana_sid|upper }}.KEY"
+    dest: "{{ sap_hana_hsr_keyexchange_tmp }}/SSFS_{{ item.value.hana_sid|upper }}.KEY"
     fail_on_missing: yes
     flat: yes
   with_dict: "{{ hsr }}"
@@ -135,7 +146,7 @@
 
 - name: push datfile to secondary hosts
   copy:
-    src: "{{ lookup('env','HOME') }}/sr_key_files/SSFS_{{ item.value.hana_sid|upper }}.DAT"
+    src: "{{ sap_hana_hsr_keyexchange_tmp }}/SSFS_{{ item.value.hana_sid|upper }}.DAT"
     dest: /usr/sap/{{ item.value.hana_sid|upper }}/SYS/global/security/rsecssfs/data/SSFS_{{ item.value.hana_sid|upper }}.DAT
     owner: "{{ item.value.hana_sid|lower }}adm"
     group: sapsys
@@ -147,7 +158,7 @@
 
 - name: push keyfile to secondary hosts
   copy:
-    src: "{{ lookup('env','HOME') }}/sr_key_files/SSFS_{{ item.value.hana_sid|upper }}.KEY"
+    src: "{{ sap_hana_hsr_keyexchange_tmp }}/SSFS_{{ item.value.hana_sid|upper }}.KEY"
     dest: /usr/sap/{{ item.value.hana_sid|upper }}/SYS/global/security/rsecssfs/key/SSFS_{{ item.value.hana_sid|upper }}.KEY
     owner: "{{ item.value.hana_sid|lower }}adm"
     group: sapsys
