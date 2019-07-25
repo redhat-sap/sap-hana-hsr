@@ -12,6 +12,11 @@ chown {{ item.value.hana_sid|lower }}adm {{ item.value.hsr_backup_directory }}
 su - {{ item.value.hana_sid|lower }}adm -c "echo \"\c -i {{ item.value.hana_instance_number }} -u SYSTEM -p {{ item.value.hana_pw_system_user_clear }} -d SystemDB
 BACKUP DATA USING FILE ('{{ item.value.hsr_backup_directory }}')\" | hdbsql"
 
+#for hana 1 and single container
+#su - {{ item.value.hana_sid|lower }}adm -c "echo \"\c -i {{ item.value.hana_instance_number }} -u SYSTEM -p {{ item.value.hana_pw_system_user_clear }}
+#BACKUP DATA USING FILE ('{{ item.value.hsr_backup_directory }}')\" | hdbsql"
+
+
 if [ $? != "0" ]; then 
 exit 1
 fi
