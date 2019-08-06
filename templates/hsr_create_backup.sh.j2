@@ -4,7 +4,8 @@
 # Without Multi-Instance installations delete -d SystemDB
 
 if [ ! -d {{ item.value.hsr_backup_directory }} ]; then
- mkdir {{ item.value.hsr_backup_directory }}
+ mkdir -p {{ item.value.hsr_backup_directory }}
+ chown {{ item.value.hana_sid }}adm {{ item.value.hsr_backup_directory }}
 fi
 
 chown {{ item.value.hana_sid|lower }}adm {{ item.value.hsr_backup_directory }}
