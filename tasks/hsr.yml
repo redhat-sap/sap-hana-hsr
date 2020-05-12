@@ -18,6 +18,8 @@
   file:
     path: "{{ item.value.hsr_backup_directory }}"
     state: directory
+    owner: "{{ item.value.hana_sid|lower }}adm"
+    group: sapsys
   with_dict: "{{ hsr }}"
 
 - name: Create File for Scale-Out Enviornments
