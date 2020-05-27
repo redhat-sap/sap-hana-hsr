@@ -62,7 +62,7 @@
     executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  become_flag: -i
+  become_flags: '-i'
   register: enablesr
   changed_when: "'successfully enabled system as system replication source site' in enablesr.stdout"
   when:
@@ -91,7 +91,7 @@
     executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  become_flag: -i
+  become_flags: '-i'
   register: registersr
   changed_when: "'adding site' in registersr.stdout"
   when:
