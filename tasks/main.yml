@@ -97,3 +97,16 @@
   when:
     - sap_hana_hsr_role == 'secondary'
 
+- name: Ensure HANA instance is started in the secondary node
+  shell: |
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/sapcontrol \
+      -nr {{ sap_hana_hsr_hana_instance_number }} -function StartSystem
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  register: startinstance
+  changed_when: "'StartSystem' in stopinstance.stdout"
+  when:
+    - sap_hana_hsr_role == 'secondary'
+
