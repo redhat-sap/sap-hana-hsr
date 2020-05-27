@@ -15,7 +15,7 @@ Variables to be used with this role must be added with different scopes. Some of
 | variable | info | required? |
 |:--------:|:----:|:---------:|
 |sap_hana_hsr_hana_sid|SAP HANA System ID|yes|
-|sap_hana_hsr_hana_instance_number|Instance Number|yes|
+|sap_hana_hsr_hana_instance_number|Instance Number|yes, **it must be declared as a string** e.g. "00"|
 |sap_hana_hsr_hana_db_system_password|Database User (SYSTEM) Password|yes|
 |sap_hana_hsr_hana_primary_hostname|System Hostname for the primary node|yes|
 
