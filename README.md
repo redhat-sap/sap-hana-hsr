@@ -24,7 +24,7 @@ Variables to be used with this role must be added with different scopes. Some of
 | variable | info | required? |
 |:--------:|:----:|:---------:|
 |sap_hana_hsr_role|The host role in the replication architecture|yes, options are **primary** or **secondary**|
-|sap_hana_hsr_alias|
+|sap_hana_hsr_alias|Alias used to identify the HANA Site Name in the replication layout|yes|
 
 ## Example Playbook
 
