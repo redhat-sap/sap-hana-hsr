@@ -1,8 +1,97 @@
 ---
 
-- include: hsr.yml
-  when: ( hsr is defined )
-  tags:
-    - hsr
+- name: Ensure system PKI SSFS store in the secondary Node matches with the primary Node - pulling
+  fetch:
+    src: "{{ item }}"
+    dest: /tmp/
+    flat: yes
+  loop:
+    - /usr/sap/{{ sap_hana_hsr_hana_sid }}/SYS/global/security/rsecssfs/data/SSFS_{{ sap_hana_hsr_hana_sid }}.DAT
+    - /usr/sap/{{ sap_hana_hsr_hana_sid }}/SYS/global/security/rsecssfs/key/SSFS_{{ sap_hana_hsr_hana_sid }}.KEY
+  when:
+    - sap_hana_hsr_role == 'primary'
 
-...
+- name: Ensure system PKI SSFS store in the secondary Node matches with the primary Node - pushing
+  copy:
+    src: "/tmp/{{ item.file }}"
+    dest: "{{ item.path }}{{ item.file }}"
+    owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+    group: sapsys
+    mode: '{{ item.mode }}'
+  loop:
+    - { path: '/usr/sap/{{ sap_hana_hsr_hana_sid }}/SYS/global/security/rsecssfs/data/', file: 'SSFS_{{ sap_hana_hsr_hana_sid }}.DAT', mode: '0600' }
+    - { path: '/usr/sap/{{ sap_hana_hsr_hana_sid }}/SYS/global/security/rsecssfs/key/', file: 'SSFS_{{ sap_hana_hsr_hana_sid }}.KEY', mode: '0640' }
+  when:
+    - sap_hana_hsr_role == 'secondary'
+
+- name: Ensure a backup exists for SYSTEM
+  shell: |
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
+      -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<EOF
+      BACKUP DATA USING FILE ('system_bck');
+      EOF
+  args:
+     executable: /bin/bash
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  register: systembackup
+  changed_when: "'0 rows affected' in systembackup.stdout"
+  when:
+    - sap_hana_hsr_role == 'primary'
+
+- name: Ensure a backup exists for {{ sap_hana_hsr_hana_sid }}
+  shell: |
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
+      -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<EOF
+      BACKUP DATA FOR {{ sap_hana_hsr_hana_sid }} USING FILE ('data_bck');
+      EOF
+  args:
+     executable: /bin/bash
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  register: databackup
+  changed_when: "'0 rows affected' in databackup.stdout"
+  when:
+    - sap_hana_hsr_role == 'primary'
+
+- name: Enable HANA System Replication in the primary node
+  shell: |
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
+      -sr_enable --name="{{ sap_hana_hsr_alias }}"
+  args:
+     executable: /bin/bash
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  register: enablesr
+  changed_when: "'successfully enabled system as system replication source site' in enablesr.stdout"
+  when:
+    - sap_hana_hsr_role == 'primary'
+
+- name: Ensure HANA instance is stopped in the secondary node
+  shell: |
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/sapcontrol \
+      -nr {{ sap_hana_hsr_hana_instance_number }} -function StopSystem
+  args:
+     executable: /bin/bash
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  register: stopinstance
+  changed_when: "'StopSystem' in stopinstance.stdout"
+  when:
+    - sap_hana_hsr_role == 'secondary'
+
+- name: Register secondary node to HANA System Replication
+  shell: |
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
+      -sr_register --name={{ sap_hana_hsr_alias }} \
+      --remoteHost={{ sap_hana_hsr_hana_primary_hostname }} --remoteInstance={{ sap_hana_hsr_hana_instance_number }} \
+      --replicationMode=sync --operationMode=logreplay
+  args:
+     executable: /bin/bash
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  register: registersr
+  changed_when: "'adding site' in registersr.stdout"
+  when:
+    - sap_hana_hsr_role == 'secondary'
+

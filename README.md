@@ -1,167 +1,57 @@
-saphana-deploy
-==============
+# sap-hana-hsr [![Build Status](https://travis-ci.com/redhat-sap/sap-hana-hsr.svg?branch=master)](https://travis-ci.com/redhat-sap/sap-hana-hsr)
 
-This adds HANA System Replication (HSR) to previously deployed SAP HANA 1.0 SPS 12 and above (HANA2) systems.
+This role enables SAP HANA Sysetem Replication between 2 given RHEL 7.x or 8.x hosts.
 
-Requirements
-------------
+## Requirements
 
-This role requires the system to be prepared with saphana-preconfigure and deployed with saphana-deploy role.
+SAP HANA 1.0 SPS 12 and above (HANA2) must be installed and running on the given hosts.
 
-Role Variables
---------------
+## Role Variables
 
-### Configuration for Instance deployment
+Variables to be used with this role must be added with different scopes. Some of the variables can be applied to both hosts, and some of them must apply individually to each host. This is due the nature of SAP HANA System Replication, where hosts will have different roles (primary and secondary) in the replication architecture.
 
-This role uses the same variables as the saphana-preconfigure and saphana-deploy role.
-It introduces the following additional variables:
-- `hsr_deploy_type`: This has to be set `enable` on the primary and `register` on the secondary node.
-- `hsr`: this is a dictionary that defines the parameters for enabling system replication. See example below
+### Common variables for each hosts
 
-These  variables need to be set in the host_vars file. See [Best Practises](http://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html?highlight=host_var#group-and-host-variables) for more details.
+| variable | info | required? |
+|:--------:|:----:|:---------:|
+|sap_hana_hsr_hana_sid|SAP HANA System ID|yes|
+|sap_hana_hsr_hana_instance_number|Instance Number|yes|
+|sap_hana_hsr_hana_db_system_password|Database User (SYSTEM) Password|yes|
+|sap_hana_hsr_hana_primary_hostname|System Hostname for the primary node|yes|
 
-### Example host_vars file for primary server 'node1'
+### Specific variables per host
 
-     ---
-     deployment_instance: true
-     hsr_deploy_type: enable
-
-     instances:
-        l01:
-           id_user_sidadm: "30210"
-           pw_user_sidadm: "Adm12356"
-           hana_pw_system_user_clear: "System123"
-           hana_components: "client,server"
-           hana_system_type: "Master"
-           id_group_shm: "30220"
-           hana_instance_hostname: node1
-           hana_addhosts:
-           hana_sid: L01
-           hana_instance_number: 10
-           hana_system_usage: custom
-     hsr:
-       l01:
-         hana_instance_hostname: node1
-         hana_sid: L01
-         hana_instance_number: 10
-         hana_pw_system_user_clear: "System123"
-         hsr_name: DC1
-         hsr_type: PRIMARY
-         hsr_configure: yes
-         hsr_type_remote_host: node2
-         hsr_operation_mode: logreplay
-         hsr_replicationmode: sync
-         hsr_backup_directory: /hana/shared/L01/HDB10/backup/data
-
-### Example host_vars file for secondary server 'node2'
-
-     ---
-     deployment_instance: true
-     hsr_deploy_type: register
-
-     instances:
-        l01:
-           id_user_sidadm: "30210"
-           pw_user_sidadm: "Adm12356"
-           hana_pw_system_user_clear: "System123"
-           hana_components: "client,server"
-           hana_system_type: "Master"
-           id_group_shm: "30220"
-           hana_instance_hostname: node2
-           hana_addhosts:
-           hana_sid: L01
-           hana_instance_number: 10
-           hana_system_usage: custom
-
-     hsr:
-       l01:
-         hana_instance_hostname: node2
-         hana_sid: L01
-         hana_instance_number: 10
-         hana_pw_system_user_clear: "System123"
-         hsr_name: DC2
-         hsr_type: SECONDARY
-         hsr_configure: yes
-         hsr_type_remote_host: node1
-         hsr_operation_mode: logreplay
-         hsr_replicationmode: sync
-         hsr_backup_directory: /hana/shared/L01/HDB10/backup/data
+| variable | info | required? |
+|:--------:|:----:|:---------:|
+|sap_hana_hsr_role|The host role in the replication architecture|yes, options are **primary** or **secondary**|
+|sap_hana_hsr_alias|
 
 
+### HANA System Replication check
 
-Example Playbook
-----------------
+Once HANA System Replication has been configured using this role, you can check the actual status doing the following in the **primary** host:
 
-Here is an example playbook that installs two complete servers and setup system replication. Please note that this playbook requires correctly configured host_vars files.
+```bash
+# su - <sid>adm
+# /usr/sap/<SID>/HDB<INSTANCE_NUMBER>/exe/python_support/systemReplicationStatus.py
 
-    ---
-    - hosts: hana
-      remote_user: root
+| Database | Host       | Port  | Service Name | Volume ID | Site ID | Site Name | Secondary  | Secondary | Secondary | Secondary | Secondary     | Replication | Replication | Replication    |
+|          |            |       |              |           |         |           | Host       | Port      | Site ID   | Site Name | Active Status | Mode        | Status      | Status Details |
+| -------- | ---------- | ----- | ------------ | --------- | ------- | --------- | ---------- | --------- | --------- | --------- | ------------- | ----------- | ----------- | -------------- |
+| SYSTEMDB | hana-25e40 | 30001 | nameserver   |         1 |       1 | DC1       | hana-25e41 |     30001 |         2 | DC2       | YES           | SYNC        | ACTIVE      |                |
+| RH1      | hana-25e40 | 30007 | xsengine     |         2 |       1 | DC1       | hana-25e41 |     30007 |         2 | DC2       | YES           | SYNC        | ACTIVE      |                |
+| RH1      | hana-25e40 | 30003 | indexserver  |         3 |       1 | DC1       | hana-25e41 |     30003 |         2 | DC2       | YES           | SYNC        | ACTIVE      |                |
 
-      vars:
-              # subscribe-rhn role variables
-              reg_activation_key: myregistration
-              reg_organization_id: 123456
+status system replication site "2": ACTIVE
+overall system replication status: ACTIVE
 
-              repositories:
-                      - rhel-7-server-rpms
-                      - rhel-sap-hana-for-rhel-7-server-rpms
+Local System Replication State
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-              # disk-init role variables
-              disks:
-                      /dev/vdc: vg00
-                      /dev/vdb: vg00
-              logvols:
-                      hana_shared:
-                              size: 24G
-                              vol: vg00
-                              mountpoint: /hana/shared
-                      hana_data:
-                              size: 24G
-                              vol: vg00
-                              mountpoint: /hana/data
-                      hana_logs:
-                              size: 12G
-                              vol: vg00
-                              mountpoint: /hana/logs
-                      usr_sap:
-                              size: 49G
-                              vol: vg00
-                              mountpoint: /usr/sap
-
-
-              # rhel-system-roles.timesync variables
-              ntp_servers:
-                      - hostname: 0.rhel.pool.ntp.org
-                        iburst: yes
-                      - hostname: 1.rhel.pool.ntp.org
-                        iburst: yes
-                      - hostname: 2.rhel.pool.ntp.org
-                        iburst: yes
-                      - hostname: 3.rhel.pool.ntp.org
-                        iburst: yes
-
-
-              # SAP Precoonfigure role
-
-              # SAP-Media Check
-              install_nfs: "mynfsserver:/installi-export"
-              installroot: /install
-              hana_installdir: "{{ installroot + '/HANA2SPS02' }}"
-
-              hana_pw_hostagent_ssl: "MyS3cret!"
-              id_user_sapadm: "30200"
-              id_group_shm: "30220"
-              id_group_sapsys: "30200"
-              pw_user_sapadm_clear: "MyS3cret!"
-
-      roles:
-              - { role: mk-ansible-roles.subscribe-rhn }
-              - { role: mk-ansible-roles.disk-init }
-              - { role: linux-system-roles.timesync }
-              - { role: mk-ansible-roles.saphana-preconfigure }
-              - { role: mk-ansible-roles.saphana-deploy }
-              - { role: mk-ansible-roles.saphana-hsr }
+mode: PRIMARY
+site id: 1
+site name: DC1
+```
 
 ## License
 
