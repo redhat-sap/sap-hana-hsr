@@ -26,8 +26,34 @@ Variables to be used with this role must be added with different scopes. Some of
 |sap_hana_hsr_role|The host role in the replication architecture|yes, options are **primary** or **secondary**|
 |sap_hana_hsr_alias|
 
+## Example Playbook
 
-### HANA System Replication check
+```yaml
+    - hosts: hana
+      roles:
+        - { role: redhat_sap.sap_hana_hsr }
+```
+
+## Example Inventory
+
+```yaml
+# cat <inventory_dir>/group_vars/hana.yml
+## Variables required for 'sap_hana_hsr' role
+sap_hana_hsr_hana_sid: RH1
+sap_hana_hsr_hana_instance_number: "00"
+sap_hana_hsr_hana_db_system_password: "MyS3cr3tP4ssw0rd"
+sap_hana_hsr_hana_primary_hostname: hana-0c0c0
+
+# cat <inventory_dir>/host_vars/hana-0c0c0.yml
+sap_hana_hsr_role: "primary"
+sap_hana_hsr_alias: "DC1"
+
+# cat <inventory_dir>/host_vars/hana-0c0c1.yml
+sap_hana_hsr_role: "secondary"
+sap_hana_hsr_alias: "DC2"
+```
+
+## HANA System Replication check
 
 Once HANA System Replication has been configured using this role, you can check the actual status doing the following in the **primary** host:
 
