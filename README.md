@@ -33,7 +33,7 @@ Once HANA System Replication has been configured using this role, you can check 
 
 ```bash
 # su - <sid>adm
-# /usr/sap/<SID>/HDB<INSTANCE_NUMBER>/exe/python_support/systemReplicationStatus.py
+# python /usr/sap/<SID>/HDB<INSTANCE_NUMBER>/exe/python_support/systemReplicationStatus.py
 
 | Database | Host       | Port  | Service Name | Volume ID | Site ID | Site Name | Secondary  | Secondary | Secondary | Secondary | Secondary     | Replication | Replication | Replication    |
 |          |            |       |              |           |         |           | Host       | Port      | Site ID   | Site Name | Active Status | Mode        | Status      | Status Details |

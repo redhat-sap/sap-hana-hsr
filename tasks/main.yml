@@ -56,13 +56,13 @@
 
 - name: Enable HANA System Replication in the primary node
   shell: |
+      source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
       /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
       -sr_enable --name="{{ sap_hana_hsr_alias }}"
   args:
     executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  become_flags: '-i'
   register: enablesr
   changed_when: "'successfully enabled system as system replication source site' in enablesr.stdout"
   when:
@@ -83,6 +83,7 @@
 
 - name: Register secondary node to HANA System Replication
   shell: |
+      source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
       /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
       -sr_register --name={{ sap_hana_hsr_alias }} \
       --remoteHost={{ sap_hana_hsr_hana_primary_hostname }} --remoteInstance={{ sap_hana_hsr_hana_instance_number }} \
@@ -91,7 +92,6 @@
     executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  become_flags: '-i'
   register: registersr
   changed_when: "'adding site' in registersr.stdout"
   when:
