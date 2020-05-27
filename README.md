@@ -1,4 +1,4 @@
-# sap-hana-hsr [![Build Status](https://travis-ci.com/redhat-sap/sap-hana-hsr.svg?branch=master)](https://travis-ci.com/redhat-sap/sap-hana-hsr)
+# sap-hana-hsr ![Ansible Lint](https://github.com/redhat-sap/sap-hana-hsr/workflows/Ansible%20Lint/badge.svg?branch=master) ![Ansible Galaxy Import](https://github.com/redhat-sap/sap-hana-hsr/workflows/Ansible%20Galaxy%20Import/badge.svg?branch=master)
 
 This role enables SAP HANA Sysetem Replication between 2 given RHEL 7.x or 8.x hosts.
 
