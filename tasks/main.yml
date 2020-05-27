@@ -60,10 +60,9 @@
       -sr_enable --name="{{ sap_hana_hsr_alias }}"
   args:
     executable: /bin/bash
-  environment:
-    path: "/usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh"
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  become_flag: -i
   register: enablesr
   changed_when: "'successfully enabled system as system replication source site' in enablesr.stdout"
   when:
@@ -90,10 +89,9 @@
       --replicationMode=sync --operationMode=logreplay
   args:
     executable: /bin/bash
-  environment:
-    path: "/usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh"
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  become_flag: -i
   register: registersr
   changed_when: "'adding site' in registersr.stdout"
   when:
