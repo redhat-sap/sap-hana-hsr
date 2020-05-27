@@ -163,15 +163,10 @@ Here is an example playbook that installs two complete servers and setup system 
               - { role: mk-ansible-roles.saphana-deploy }
               - { role: mk-ansible-roles.saphana-hsr }
 
-License
--------
+## License
 
-Apache License
-Version 2.0, January 2004
+GPLv3
 
-Author Information
-------------------
+## Author Information
 
-Markus Koch
-
-Please leave comments in the github repo issue list
+Red Hat SAP Community of Practice
