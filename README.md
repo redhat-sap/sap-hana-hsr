@@ -10,7 +10,7 @@ SAP HANA 1.0 SPS 12 and above (HANA2) must be installed and running on the given
 
 Variables to be used with this role must be added with different scopes. Some of the variables can be applied to both hosts, and some of them must apply individually to each host. This is due the nature of SAP HANA System Replication, where hosts will have different roles (primary and secondary) in the replication architecture.
 
-### Common variables for each hosts
+### Common variables
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
@@ -18,6 +18,8 @@ Variables to be used with this role must be added with different scopes. Some of
 |sap_hana_hsr_hana_instance_number|Instance Number|yes, **it must be declared as a string** e.g. "00"|
 |sap_hana_hsr_hana_db_system_password|Database User (SYSTEM) Password|yes|
 |sap_hana_hsr_hana_primary_hostname|System Hostname for the primary node|yes|
+|sap_hana_hsr_rep_mode|Replication mode for the replication of the redo log (sync|syncmem|async)|no, defaulted to `sync`|
+|sap_hana_hsr_oper_mode|Operation mode to run SAP HANA system replication (delta_datashipping|logreplay|logreplay_readaccess)|no, defaulted to `logreplay`|
 
 ### Specific variables per host
 
