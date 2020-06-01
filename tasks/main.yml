@@ -109,4 +109,4 @@
   changed_when: "'StartSystem' in stopinstance.stdout"
   when:
     - sap_hana_hsr_role == 'secondary'
-
+    
