@@ -1,0 +1,3 @@
+---
+sap_hana_hsr_rep_mode: sync
+sap_hana_hsr_oper_mode: logreplay
