@@ -72,8 +72,7 @@
 
 - name: Ensure HANA instance is stopped in the secondary node
   shell: |
-      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/sapcontrol \
-      -nr {{ sap_hana_hsr_hana_instance_number }} -function StopSystem
+      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/HDB stop
   args:
     executable: /bin/bash
   become: yes
