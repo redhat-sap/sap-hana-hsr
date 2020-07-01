@@ -107,6 +107,6 @@
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   register: startinstance
-  changed_when: "'StartSystem' in stopinstance.stdout"
+  changed_when: "'StartSystem' in startinstance.stdout"
   when:
     - sap_hana_hsr_role == 'secondary'
