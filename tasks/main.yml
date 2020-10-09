@@ -26,12 +26,11 @@
 
 - name: Ensure a backup exists for SYSTEM
   shell:
-    cmd: |
-      source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
-      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
-      -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<EOF
-      BACKUP DATA USING FILE ('system_bck');
-      EOF
+    source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh
+    /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
+    -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<' EOF'
+    BACKUP DATA USING FILE ('system_bck');
+    EOF
   args:
      executable: /bin/bash
   become: yes
@@ -42,13 +41,12 @@
     - sap_hana_hsr_role == 'primary'
 
 - name: Ensure a backup exists for {{ sap_hana_hsr_hana_sid }}
-  shell: 
-    cmd: |
-      source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
-      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
-      -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<EOF
-      BACKUP DATA FOR {{ sap_hana_hsr_hana_sid }} USING FILE ('data_bck');
-      EOF
+  shell:
+    source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh
+    /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
+    -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<' EOF'
+    BACKUP DATA FOR {{ sap_hana_hsr_hana_sid }} USING FILE ('data_bck');
+    EOF
   args:
      executable: /bin/bash
   become: yes
