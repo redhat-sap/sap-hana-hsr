@@ -24,13 +24,26 @@
   when:
     - sap_hana_hsr_role == 'secondary'
 
+- name: create temporary directory to store the processed template
+  tempfile:
+    state: directory
+    suffix: hanabck
+  register: tmpdir
+
+- name: "Process HANA Backup SYSTEM Template"
+  template:
+    src: "{{ role_path }}/templates/system_backup.j2"
+    dest: "{{ tmpdir.path }}/system_backup.sh"
+    mode: 0555
+
+- name: "Process HANA Backup SID Template"
+  template:
+    src: "{{ role_path }}/templates/sid_backup.j2"
+    dest: "{{ tmpdir.path }}/sid_backup.sh"
+    mode: 0555
+
 - name: Ensure a backup exists for SYSTEM
-  shell: |
-    source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh
-    /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
-    -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<' EOF'
-    BACKUP DATA USING FILE ('system_bck');
-    EOF
+  cmd: "{{ tmpdir.path }}/system_backup.sh"
   args:
      executable: /bin/bash
   become: yes
@@ -41,12 +54,7 @@
     - sap_hana_hsr_role == 'primary'
 
 - name: Ensure a backup exists for {{ sap_hana_hsr_hana_sid }}
-  shell: |
-    source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh
-    /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
-    -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<' EOF'
-    BACKUP DATA FOR {{ sap_hana_hsr_hana_sid }} USING FILE ('data_bck');
-    EOF
+  cmd: "{{ tmpdir.path }}/sid_backup.sh"
   args:
      executable: /bin/bash
   become: yes
