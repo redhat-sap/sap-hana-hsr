@@ -36,6 +36,8 @@
     dest: "{{ tmpdir.path }}/system_backup.sh"
     owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
     mode: 0755
+  when:
+    - sap_hana_hsr_role == 'primary'
 
 - name: "Process HANA Backup SID Template"
   template:
@@ -43,12 +45,16 @@
     dest: "{{ tmpdir.path }}/sid_backup.sh"
     owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
     mode: 0755
+  when:
+    - sap_hana_hsr_role == 'primary'
 
 - name: "Ensure {{ sap_hana_hsr_hana_sid | lower }}adm can execute backup scripts"
   file:
     path: "{{ tmpdir.path }}"
     owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
     mode: '0755'
+  when:
+    - sap_hana_hsr_role == 'primary'
 
 - name: Ensure a backup exists for SYSTEM
   command: "{{ tmpdir.path }}/system_backup.sh"
