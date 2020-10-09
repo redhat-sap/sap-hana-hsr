@@ -80,7 +80,8 @@
       -sr_enable --name="{{ sap_hana_hsr_alias }}"
   args:
     executable: /bin/bash
-  environment: 
+  environment:
+    SAP_RETRIEVAL_PATH: /usr/sap/RHE/HDB00/hana1 
     LD_LIBRARY_PATH: /usr/sap/RHE/HDB00/exe/krb5/lib/krb5/plugins/preauth:/usr/sap/RHE/HDB00/exe/krb5/lib:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/Python/lib:/usr/sap/RHE/HDB00/exe/filter:/usr/sap/RHE/HDB00/exe/dat_bin_dir:/usr/sap/RHE/HDB00/exe/plugins/afl:/usr/sap/RHE/HDB00/exe/plugins/lcapps:/usr/sap/RHE/HDB00/exe/plugins/repository:/usr/sap/RHE/HDB00/exe/plugins/epmmds:/usr/sap/RHE/SYS/global/hdb/federation:/usr/sap/RHE/SYS/global/hdb/plugins/3rd_party_libs
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
@@ -109,7 +110,8 @@
       --replicationMode={{ sap_hana_hsr_rep_mode }} --operationMode={{ sap_hana_hsr_oper_mode }}
   args:
     executable: /bin/bash
-  environment: 
+  environment:
+    SAP_RETRIEVAL_PATH: /usr/sap/RHE/HDB00/hana1
     LD_LIBRARY_PATH: /usr/sap/RHE/HDB00/exe/krb5/lib/krb5/plugins/preauth:/usr/sap/RHE/HDB00/exe/krb5/lib:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/Python/lib:/usr/sap/RHE/HDB00/exe/filter:/usr/sap/RHE/HDB00/exe/dat_bin_dir:/usr/sap/RHE/HDB00/exe/plugins/afl:/usr/sap/RHE/HDB00/exe/plugins/lcapps:/usr/sap/RHE/HDB00/exe/plugins/repository:/usr/sap/RHE/HDB00/exe/plugins/epmmds:/usr/sap/RHE/SYS/global/hdb/federation:/usr/sap/RHE/SYS/global/hdb/plugins/3rd_party_libs
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
