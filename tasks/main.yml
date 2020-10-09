@@ -48,8 +48,8 @@
      executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  register: systembackup
-  changed_when: "'0 rows affected' in systembackup.stdout"
+  # register: systembackup
+  # changed_when: "'0 rows affected' in systembackup.stdout"
   when:
     - sap_hana_hsr_role == 'primary'
 
@@ -59,8 +59,8 @@
      executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  register: databackup
-  changed_when: "'0 rows affected' in databackup.stdout"
+  # register: databackup
+  # changed_when: "'0 rows affected' in databackup.stdout"
   when:
     - sap_hana_hsr_role == 'primary'
 
