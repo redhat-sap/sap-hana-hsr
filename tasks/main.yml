@@ -25,7 +25,7 @@
     - sap_hana_hsr_role == 'secondary'
 
 - name: Ensure a backup exists for SYSTEM
-  raw: |
+  cmd: |
       source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
       /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
       -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<EOF
@@ -41,7 +41,7 @@
     - sap_hana_hsr_role == 'primary'
 
 - name: Ensure a backup exists for {{ sap_hana_hsr_hana_sid }}
-  raw: |
+  cmd: |
       source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
       /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbsql \
       -i {{ sap_hana_hsr_hana_instance_number }} -u SYSTEM -p {{ sap_hana_hsr_hana_db_system_password }} -d SYSTEMDB -m <<EOF
@@ -57,7 +57,7 @@
     - sap_hana_hsr_role == 'primary'
 
 - name: Enable HANA System Replication in the primary node
-  raw: |
+  shell: |
       source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
       /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
       -sr_enable --name="{{ sap_hana_hsr_alias }}"
@@ -83,7 +83,7 @@
     - sap_hana_hsr_role == 'secondary'
 
 - name: Register secondary node to HANA System Replication
-  raw: |
+  shell: |
       source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
       /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
       -sr_register --name={{ sap_hana_hsr_alias }} \
