@@ -46,8 +46,6 @@
 
 - name: Ensure a backup exists for SYSTEM
   command: "{{ tmpdir.path }}/system_backup.sh"
-  args:
-     executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   # register: systembackup
@@ -57,8 +55,6 @@
 
 - name: Ensure a backup exists for {{ sap_hana_hsr_hana_sid }}
   command: "{{ tmpdir.path }}/sid_backup.sh"
-  args:
-     executable: /bin/bash
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   # register: databackup
