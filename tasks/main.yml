@@ -82,7 +82,6 @@
     executable: /bin/bash
   environment: 
     LD_LIBRARY_PATH: /usr/sap/RHE/HDB00/exe/krb5/lib/krb5/plugins/preauth:/usr/sap/RHE/HDB00/exe/krb5/lib:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/Python/lib:/usr/sap/RHE/HDB00/exe/filter:/usr/sap/RHE/HDB00/exe/dat_bin_dir:/usr/sap/RHE/HDB00/exe/plugins/afl:/usr/sap/RHE/HDB00/exe/plugins/lcapps:/usr/sap/RHE/HDB00/exe/plugins/repository:/usr/sap/RHE/HDB00/exe/plugins/epmmds:/usr/sap/RHE/SYS/global/hdb/federation:/usr/sap/RHE/SYS/global/hdb/plugins/3rd_party_libs
-    PYTHONPATH: /usr/sap/RHE/SYS/global/hdb/custom/python_support:/usr/sap/RHE/HDB00/exe/python_support:/usr/sap/RHE/HDB00/hana1:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/testscripts:/usr/sap/RHE/HDB00/exe/Python/lib/python2.7
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   # register: enablesr
@@ -112,7 +111,6 @@
     executable: /bin/bash
   environment: 
     LD_LIBRARY_PATH: /usr/sap/RHE/HDB00/exe/krb5/lib/krb5/plugins/preauth:/usr/sap/RHE/HDB00/exe/krb5/lib:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/Python/lib:/usr/sap/RHE/HDB00/exe/filter:/usr/sap/RHE/HDB00/exe/dat_bin_dir:/usr/sap/RHE/HDB00/exe/plugins/afl:/usr/sap/RHE/HDB00/exe/plugins/lcapps:/usr/sap/RHE/HDB00/exe/plugins/repository:/usr/sap/RHE/HDB00/exe/plugins/epmmds:/usr/sap/RHE/SYS/global/hdb/federation:/usr/sap/RHE/SYS/global/hdb/plugins/3rd_party_libs
-    PYTHONPATH: /usr/sap/RHE/SYS/global/hdb/custom/python_support:/usr/sap/RHE/HDB00/exe/python_support:/usr/sap/RHE/HDB00/hana1:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/testscripts:/usr/sap/RHE/HDB00/exe/Python/lib/python2.7
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   # register: registersr
