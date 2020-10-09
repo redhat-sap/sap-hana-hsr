@@ -43,7 +43,7 @@
     mode: 0555
 
 - name: Ensure a backup exists for SYSTEM
-  cmd: "{{ tmpdir.path }}/system_backup.sh"
+  command: "{{ tmpdir.path }}/system_backup.sh"
   args:
      executable: /bin/bash
   become: yes
@@ -54,7 +54,7 @@
     - sap_hana_hsr_role == 'primary'
 
 - name: Ensure a backup exists for {{ sap_hana_hsr_hana_sid }}
-  cmd: "{{ tmpdir.path }}/sid_backup.sh"
+  command: "{{ tmpdir.path }}/sid_backup.sh"
   args:
      executable: /bin/bash
   become: yes
