@@ -47,7 +47,7 @@
 - name: "Ensure {{ sap_hana_hsr_hana_sid | lower }}adm can execute backup scripts"
   file:
     path: "{{ tmpdir.path }}"
-    owner: "{{ sap_hana_hsr_hana_sid }}"
+    owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
     mode: '0755'
 
 - name: Ensure a backup exists for SYSTEM
