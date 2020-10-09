@@ -34,13 +34,15 @@
   template:
     src: "{{ role_path }}/templates/system_backup.j2"
     dest: "{{ tmpdir.path }}/system_backup.sh"
-    mode: 0555
+    owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+    mode: 0755
 
 - name: "Process HANA Backup SID Template"
   template:
     src: "{{ role_path }}/templates/sid_backup.j2"
     dest: "{{ tmpdir.path }}/sid_backup.sh"
-    mode: 0555
+    owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+    mode: 0755
 
 - name: Ensure a backup exists for SYSTEM
   command: "{{ tmpdir.path }}/system_backup.sh"
