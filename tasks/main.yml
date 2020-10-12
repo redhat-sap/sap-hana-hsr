@@ -89,7 +89,7 @@
 - name: Enable HANA System Replication in the primary node
   command: "{{ tmpdir.path }}/enable_hsr.sh"
   become: yes
-  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  #become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   when:
     - sap_hana_hsr_role == 'primary'
 
@@ -108,7 +108,7 @@
 - name: Register secondary node to HANA System Replication
   command: "{{ tmpdir.path }}/register_hsr.sh"
   become: yes
-  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  #become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   when:
     - sap_hana_hsr_role == 'secondary'
 
