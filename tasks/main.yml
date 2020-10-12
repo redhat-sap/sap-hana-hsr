@@ -90,6 +90,8 @@
   command: "{{ tmpdir.path }}/enable_hsr.sh"
   become: yes
   #become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  async: 45
+  poll: 0
   when:
     - sap_hana_hsr_role == 'primary'
 
@@ -109,6 +111,8 @@
   command: "{{ tmpdir.path }}/register_hsr.sh"
   become: yes
   #become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+  async: 45
+  poll: 0
   when:
     - sap_hana_hsr_role == 'secondary'
 
