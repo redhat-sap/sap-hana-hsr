@@ -1,2 +1,3 @@
 #!/bin/bash
+source /usr/sap/{{ sap_hana_hsr_hana_sid }}/home/.sapenv.sh && \
 /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil -sr_enable --name="{{ sap_hana_hsr_alias }}"
