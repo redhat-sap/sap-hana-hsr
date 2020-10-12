@@ -1,0 +1,5 @@
+#!/bin/bash
+/usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
+-sr_register --name={{ sap_hana_hsr_alias }} \
+--remoteHost={{ sap_hana_hsr_hana_primary_hostname }} --remoteInstance={{ sap_hana_hsr_hana_instance_number }} \
+--replicationMode={{ sap_hana_hsr_rep_mode }} --operationMode={{ sap_hana_hsr_oper_mode }}

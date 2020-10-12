@@ -48,20 +48,34 @@
   when:
     - sap_hana_hsr_role == 'primary'
 
+- name: "Process System Replication Template"
+  template:
+    src: "{{ role_path }}/templates/enable_hsr.j2"
+    dest: "{{ tmpdir.path }}/enable_hsr.sh"
+    owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+    mode: 0755
+  when:
+    - sap_hana_hsr_role == 'primary'
+
+- name: "Process System Replication Register Template"
+  template:
+    src: "{{ role_path }}/templates/register_hsr.j2"
+    dest: "{{ tmpdir.path }}/register_hsr.sh"
+    owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
+    mode: 0755
+  when:
+    - sap_hana_hsr_role == 'secondary'
+
 - name: "Ensure {{ sap_hana_hsr_hana_sid | lower }}adm can execute backup scripts"
   file:
     path: "{{ tmpdir.path }}"
     owner: "{{ sap_hana_hsr_hana_sid | lower }}adm"
     mode: '0755'
-  when:
-    - sap_hana_hsr_role == 'primary'
 
 - name: Ensure a backup exists for SYSTEM
   command: "{{ tmpdir.path }}/system_backup.sh"
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  # register: systembackup
-  # changed_when: "'0 rows affected' in systembackup.stdout"
   when:
     - sap_hana_hsr_role == 'primary'
 
@@ -69,25 +83,13 @@
   command: "{{ tmpdir.path }}/sid_backup.sh"
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  # register: databackup
-  # changed_when: "'0 rows affected' in databackup.stdout"
   when:
     - sap_hana_hsr_role == 'primary'
 
 - name: Enable HANA System Replication in the primary node
-  shell: |
-      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
-      -sr_enable --name="{{ sap_hana_hsr_alias }}"
-  args:
-    executable: /bin/bash
-  environment:
-    PYTHONHOME: /usr/sap/RHE/HDB00/exe/Python
-    SAP_RETRIEVAL_PATH: /usr/sap/RHE/HDB00/hana1 
-    LD_LIBRARY_PATH: /usr/sap/RHE/HDB00/exe/krb5/lib/krb5/plugins/preauth:/usr/sap/RHE/HDB00/exe/krb5/lib:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/Python/lib:/usr/sap/RHE/HDB00/exe/filter:/usr/sap/RHE/HDB00/exe/dat_bin_dir:/usr/sap/RHE/HDB00/exe/plugins/afl:/usr/sap/RHE/HDB00/exe/plugins/lcapps:/usr/sap/RHE/HDB00/exe/plugins/repository:/usr/sap/RHE/HDB00/exe/plugins/epmmds:/usr/sap/RHE/SYS/global/hdb/federation:/usr/sap/RHE/SYS/global/hdb/plugins/3rd_party_libs
+  command: "{{ tmpdir.path }}/enable_hsr.sh"
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  # register: enablesr
-  # changed_when: "'successfully enabled system as system replication source site' in enablesr.stdout"
   when:
     - sap_hana_hsr_role == 'primary'
 
@@ -104,21 +106,9 @@
     - sap_hana_hsr_role == 'secondary'
 
 - name: Register secondary node to HANA System Replication
-  shell: |
-      /usr/sap/{{ sap_hana_hsr_hana_sid | upper }}/HDB{{ sap_hana_hsr_hana_instance_number }}/exe/hdbnsutil \
-      -sr_register --name={{ sap_hana_hsr_alias }} \
-      --remoteHost={{ sap_hana_hsr_hana_primary_hostname }} --remoteInstance={{ sap_hana_hsr_hana_instance_number }} \
-      --replicationMode={{ sap_hana_hsr_rep_mode }} --operationMode={{ sap_hana_hsr_oper_mode }}
-  args:
-    executable: /bin/bash
-  environment:
-    PYTHONHOME: /usr/sap/RHE/HDB00/exe/Python
-    SAP_RETRIEVAL_PATH: /usr/sap/RHE/HDB00/hana1
-    LD_LIBRARY_PATH: /usr/sap/RHE/HDB00/exe/krb5/lib/krb5/plugins/preauth:/usr/sap/RHE/HDB00/exe/krb5/lib:/usr/sap/RHE/HDB00/exe:/usr/sap/RHE/HDB00/exe/Python/lib:/usr/sap/RHE/HDB00/exe/filter:/usr/sap/RHE/HDB00/exe/dat_bin_dir:/usr/sap/RHE/HDB00/exe/plugins/afl:/usr/sap/RHE/HDB00/exe/plugins/lcapps:/usr/sap/RHE/HDB00/exe/plugins/repository:/usr/sap/RHE/HDB00/exe/plugins/epmmds:/usr/sap/RHE/SYS/global/hdb/federation:/usr/sap/RHE/SYS/global/hdb/plugins/3rd_party_libs
+  command: "{{ tmpdir.path }}/register_hsr.sh"
   become: yes
   become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
-  # register: registersr
-  # changed_when: "'adding site' in registersr.stdout"
   when:
     - sap_hana_hsr_role == 'secondary'
 
