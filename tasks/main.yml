@@ -96,13 +96,16 @@
     - sap_hana_hsr_role == 'primary'
   register: hsr_primary
 
-- name: 'HANA System Replication - check on async task'
-  async_status:
-    jid: "{{ hsr_primary.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  retries: 100
-  delay: 10
+# - name: 'HANA System Replication - check on async task'
+#   async_status:
+#     jid: "{{ hsr_primary.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   retries: 100
+#   delay: 10
+- name: Pause for 1 minutes to build app cache
+  pause:
+    minutes: 1
 
 - name: Ensure HANA instance is stopped in the secondary node
   shell: |
@@ -126,13 +129,17 @@
     - sap_hana_hsr_role == 'secondary'
   register: hsr_secondary
 
-- name: 'HANA System Replication - check on async task'
-  async_status:
-    jid: "{{ hsr_secondary.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  retries: 100
-  delay: 10
+# - name: 'HANA System Replication - check on async task'
+#   async_status:
+#     jid: "{{ hsr_secondary.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   retries: 100
+#   delay: 10
+
+- name: Pause for 5 minutes to build app cache
+  pause:
+    minutes: 1
 
 - name: Ensure HANA instance is started in the secondary node
   shell: |
