@@ -1,4 +1,32 @@
 ---
+- name: Add secondary hostname info to primary - get info
+  getent:
+    database: hosts
+    key: "{{ ansible_hana2_hostname }}"
+  when:
+    - sap_hana_hsr_role == 'primary'
+
+- name: Add secondary hostname info to primary - add info
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ getent_hosts.keys() | first}} {{ ansible_hana2_hostname }} hana2"
+  when:
+    - sap_hana_hsr_role == 'primary'
+
+- name: Add primary hostname info to secondary - get info
+  getent:
+    database: hosts
+    key: "{{ ansible_hana1_hostname }}"
+  when:
+    - sap_hana_hsr_role == 'secondary'
+
+- name: Add primary hostname info to secondary - add info
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ getent_hosts.keys() | first}} {{ ansible_hana1_hostname }} hana1"
+  when:
+    - sap_hana_hsr_role == 'primary'
+
 
 - name: Ensure system PKI SSFS store in the secondary Node matches with the primary Node - pulling
   fetch:
@@ -137,7 +165,7 @@
 #   retries: 100
 #   delay: 10
 
-- name: Pause for 5 minutes to build app cache
+- name: Pause for 1 minutes to build app cache
   pause:
     minutes: 1
 
