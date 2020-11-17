@@ -25,7 +25,7 @@
     path: /etc/hosts
     line: "{{ getent_hosts.keys() | first}} {{ sap_hana_hsr_hana_primary_hostname }} hana1"
   when:
-    - sap_hana_hsr_role == 'primary'
+    - sap_hana_hsr_role == 'secondary'
 
 
 - name: Ensure system PKI SSFS store in the secondary Node matches with the primary Node - pulling
