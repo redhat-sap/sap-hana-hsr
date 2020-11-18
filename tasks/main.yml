@@ -2,28 +2,28 @@
 - name: Add secondary hostname info to primary - get info
   getent:
     database: hosts
-    key: "{{ sap_hana_hsr_hana_secondary_hostname }}"
+    key: "{{ sap_hana_hsr_full_secondary_hostname }}"
   when:
     - sap_hana_hsr_role == 'primary'
 
 - name: Add secondary hostname info to primary - add info
   lineinfile:
     path: /etc/hosts
-    line: "{{ getent_hosts.keys() | first}} {{ sap_hana_hsr_hana_secondary_hostname }} hana2"
+    line: "{{ getent_hosts.keys() | first}} {{ sap_hana_hsr_full_secondary_hostname }} hana2"
   when:
     - sap_hana_hsr_role == 'primary'
 
 - name: Add primary hostname info to secondary - get info
   getent:
     database: hosts
-    key: "{{ sap_hana_hsr_hana_primary_hostname }}"
+    key: "{{ sap_hana_hsr_full_primary_hostname }}"
   when:
     - sap_hana_hsr_role == 'secondary'
 
 - name: Add primary hostname info to secondary - add info
   lineinfile:
     path: /etc/hosts
-    line: "{{ getent_hosts.keys() | first}} {{ sap_hana_hsr_hana_primary_hostname }} hana1"
+    line: "{{ getent_hosts.keys() | first}} {{ sap_hana_hsr_full_primary_hostname }} hana1"
   when:
     - sap_hana_hsr_role == 'secondary'
 
