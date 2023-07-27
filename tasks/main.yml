@@ -1,6 +1,8 @@
 ---
 
 - name: Ensure system PKI SSFS store in the secondary Node matches with the primary Node - pulling
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   fetch:
     src: "{{ item }}"
     dest: /tmp/
@@ -12,6 +14,8 @@
     - sap_hana_hsr_role == 'primary'
 
 - name: Ensure system PKI SSFS store in the secondary Node matches with the primary Node - pushing
+  become: yes
+  become_user: "{{ sap_hana_hsr_hana_sid | lower }}adm"
   copy:
     src: "/tmp/{{ item.file }}"
     dest: "{{ item.path }}{{ item.file }}"
