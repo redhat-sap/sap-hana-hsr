@@ -1,3 +1,7 @@
 ---
 sap_hana_hsr_rep_mode: sync
 sap_hana_hsr_oper_mode: logreplay
+sap_hana_hsr_hana_sid: "{{ sap_hana_sid }}"
+sap_hana_hsr_alias:
+sap_hana_hsr_hana_instance_number: "{{ sap_hana_instance_number }}"
+sap_hana_hsr_hana_primary_hostname:
